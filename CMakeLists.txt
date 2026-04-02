@@ -24,4 +24,4 @@ add_subdirectory(src)
 
 
 # add main executable
-add_executable(cam-cli main.cpp)
+add_executable(cam-cli src/main.cpp)
