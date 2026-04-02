@@ -1,1 +1,1 @@
-./bin/cam-cli
+./bin/cam-cli --parsedobj
