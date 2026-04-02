@@ -15,13 +15,17 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # for output
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin/cam-cli/)
+
 
 # subdirs
 add_subdirectory(src)
 
-
-
-
 # add main executable
 add_executable(cam-cli src/main.cpp)
+
+
+#includes
+
+target_link_libraries(cam-cli PRIVATE pw-man)
+target_include_directories(cam-cli PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
