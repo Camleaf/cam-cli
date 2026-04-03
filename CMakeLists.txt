@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.25)
 
+set(project_name "cam-cli")
+
 # project definition
-project(leaf 
+project(${project_name} 
     VERSION 0.1.0 
     LANGUAGES CXX
 )
@@ -18,11 +20,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin/cam-cli/)
 
 
+set(assets_directory "$ENV{HOME}/.local/lib/cam-cli")
+add_definitions(-Dassets_dir="${assets_directory}")
 # subdirs
-add_subdirectory(src)
 
-# add main executable
 add_executable(cam-cli src/main.cpp)
+add_subdirectory(src)
+# add main executable
 
 
 #includes

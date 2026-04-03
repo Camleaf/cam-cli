@@ -1,1 +1,1 @@
-echo "testing script"
+echo "testing script $1"

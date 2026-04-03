@@ -2,7 +2,6 @@
 #include "pw-man/manager.h"
 #include <CLI11.hpp>
 #include <filesystem>
-#include "filesystem"
 // maybe use like CLI11 or some other cli tool for parseing input
 
 int main (int argc, char **argv) {
@@ -17,8 +16,6 @@ int main (int argc, char **argv) {
     CLI11_PARSE(app,argc,argv);
     
     std::cout << " " <<option << std::endl;        
-
-    system("bash ./scripts/test.sh");
-
+    
     return 0;
 }

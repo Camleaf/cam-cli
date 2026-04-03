@@ -1,1 +1,0 @@
-file(COPY "./test.sh" DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/scripts")
