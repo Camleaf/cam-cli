@@ -1,4 +1,5 @@
 #include "./manager.h"
+#include <iostream>
 
 
 
@@ -15,7 +16,7 @@ string decryptValue(string value, string password){
 
 // Checks if the master password is correct by decoding the stored master password, and seeing if the two passwords are equal.
 bool checkMasterPW(json& data, string password){
-    string encryptedKey = data.find("master").value();
+    string encryptedKey = data.find("master").value()[0];
     return decryptValue(encryptedKey, password) == password;
 }
 

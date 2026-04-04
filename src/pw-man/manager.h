@@ -1,5 +1,5 @@
-#ifndef PW_MANAGER
-#define PW_MANAGER
+#ifndef CAMCLI_PW_MANAGER
+#define CAMCLI_PW_MANAGER
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;

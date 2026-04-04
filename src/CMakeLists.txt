@@ -4,4 +4,5 @@ file(COPY
 )
 
 add_subdirectory(pw-man)
+add_subdirectory(util)
 

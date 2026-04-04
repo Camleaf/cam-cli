@@ -31,5 +31,5 @@ add_subdirectory(src)
 
 #includes
 
-target_link_libraries(cam-cli PRIVATE pw-man)
+target_link_libraries(cam-cli PRIVATE pw-man util)
 target_include_directories(cam-cli PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
