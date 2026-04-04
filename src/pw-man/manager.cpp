@@ -1,5 +1,6 @@
 #include <fstream>
 #include <filesystem>
+#include <iostream>
 #include "./manager.h"
 // Start by making it without encryption, but add encryption later
 // Is also possible that I can encrypt the JSON string before writing and decrypt when reading
@@ -23,13 +24,42 @@ stored as:
 
 */
 
-using json = nlohmann::json;
-
-json readFileAsJSON(std::string masterPassword){
-
-    std::string command_string = "bash " + std::filesystem::path(assets_dir).string() + "/scripts/ensureFile.sh " + assets_dir;
-    system(command_string.c_str());
+void setMasterPassword(string fileLocation){
     
-    return json::parse("{}");
+    json data = readFileAsJSON(fileLocation);
+    
+    
+    // check if there is no master key already. If there isn't then we can assume that the passwords list is empty 
+    if (checkMasterExistence(data)){
+        cout << "Could not find existing master password. Creating one will invalidate any existing data in the password document." << endl<<endl;
+        string pw = "";
+        int attempt = 0;
+        while (
+            pw.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_!@#$%^&*()/\\:;.,<>~?") != string::npos ||
+            pw == ""
+        ){
+            if (attempt == 3) {
+                cout << "Exiting" << endl;
+                return;
+            }
+
+            attempt++;
+            if (attempt != 1) {
+                cout << "Invalid password" << endl << endl;
+                cout << "(" << attempt << "/3) ";
+            }
+
+
+            cout << "Enter new password: " << endl << "> ";
+            cin >> pw;
+            
+        }
+        data["master"] = {pw};
+        writeFileAsJSON(fileLocation,data);
+        return;
+    }
+
+    
 }
+
 

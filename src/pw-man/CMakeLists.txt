@@ -1,1 +1,1 @@
-add_library(pw-man manager.cpp)
+add_library(pw-man cryptography.cpp filecommands.cpp manager.cpp)
