@@ -11,7 +11,13 @@ void wipeNLines(int n){
     cout << "\r";
 }
 
-string getValidPasswordInput(string message){
+bool checkIfRightPWChars(string value){
+    return value.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_!@#$%^&*()/\\:;.,<>~?|+=-~`") == string::npos
+            &&
+            value != "";
+}
+
+string getValidInput(string message, validityCallback callback){
     string pw = "";
 
     for (int idx = 0; idx < 3; idx++){
@@ -21,9 +27,7 @@ string getValidPasswordInput(string message){
         cout << "> ";
         getline(cin, pw);
 
-        if (pw.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_!@#$%^&*()/\\:;.,<>~?|+=-~`") == string::npos
-            &&
-            pw != ""){
+        if (callback(pw)){
             return pw;
         }
         wipeNLines(2);

@@ -7,7 +7,11 @@
 
 using namespace std;
 
-string getValidPasswordInput(string message);
+bool checkIfRightPWChars(string value);
+typedef bool (*validityCallback)(string value);
+
+string getValidInput(string message, validityCallback callback=checkIfRightPWChars);
 string getInputOption(vector<string> options, string message);
+
 
 #endif

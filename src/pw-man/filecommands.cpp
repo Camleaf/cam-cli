@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <fstream>
 #include <filesystem>
 #include <iostream>
@@ -15,27 +16,27 @@ void runBashCommand(string commandName){
 
 }
 
-json readFileAsJSON(string fileLocation){
+json readFileAsJSON(){
     
     // Run ensureFile bash script to make sure that the file exists before attempting to read from it
     runBashCommand("ensureFile");
 
-    std::ifstream inStream(fileLocation);
+    std::ifstream inStream(kPasswordFileLocation);
     json data;
     try {
         data = json::parse(inStream);
     } catch (json::parse_error e) {
         cout << e.what() << endl << endl;
         cout << "cam-cli: Your password document has been modified externally and the JSON structure has been corrupted, you can fix it manually at "
-            << fileLocation << endl;
+            << kPasswordFileLocation << endl;
     }
     return data;
 }
 
-void writeFileAsJSON(string fileLocation, json &data){
+void writeFileAsJSON(json &data){
     std::string stringified = data.dump();
 
-    std::ofstream outStream(fileLocation);
+    std::ofstream outStream(kPasswordFileLocation);
 
     if (!outStream.is_open()){
         cout << "cam-cli: Unable to write to password document. Changes not saved";
@@ -45,6 +46,18 @@ void writeFileAsJSON(string fileLocation, json &data){
 }
 
 
-void wipeFile(string fileLocation){ 
+void wipeFile(){ 
     runBashCommand("wipeFile");
 }
+
+
+passwordStructure mapFromJSON(json& rawData){
+    passwordStructure data = rawData.get<passwordStructure>();
+    return data;
+}
+
+json mapToJSON(passwordStructure& mapData){
+    json JSONData = mapData;
+    return JSONData;
+}
+
