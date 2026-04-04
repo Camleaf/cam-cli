@@ -6,4 +6,4 @@ rm -rf ./*
 cmake ..
 make
 cd ..
-chmod +x ./bin/cam-cli
+chmod +x ./bin/cam-cli/cam-cli
