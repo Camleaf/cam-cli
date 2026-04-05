@@ -15,22 +15,4 @@ string decryptValue(string value, string password){
 }
 
 
-bool checkMasterPW(string value){
-    json rawData = readFileAsJSON();
-    passwordStructure data = mapFromJSON(rawData);
-    return checkMasterPW(data, value);
-}
-
-// Checks if the master password is correct by decoding the stored master password, and seeing if the two passwords are equal.
-bool checkMasterPW(passwordStructure& data, string password){
-    string encryptedKey = data["master"]["user"];
-    return decryptValue(encryptedKey, password) == password;
-}
-
-
-
-bool checkMasterExistence(passwordStructure& data){
-    if (data.find("master") == data.end()) return false;
-    if (data["master"].find("user") == data["master"].end()) return false;
-    return true;
-}
+// could use botan as well.
