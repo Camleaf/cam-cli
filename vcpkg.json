@@ -1,0 +1,9 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "camleaf-shared-git",
+  "description": "<Insert description here>",
+  "dependencies": [
+    "cli11",
+    "nlohmann-json"
+  ]
+}

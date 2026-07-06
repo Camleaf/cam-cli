@@ -1,0 +1,10 @@
+function(add_cli11_to_target_vcpkg targetname is_private)
+    find_package(CLI11 CONFIG REQUIRED)
+    if(is_private EQUAL TRUE)
+        target_link_libraries(${targetname} PRIVATE CLI11:CLI11)
+    else ()
+        target_link_libraries(${targetname} PUBLIC CLI11::CLI11)
+    endif ()
+endfunction()
+
+add_package_finder("cli11" "add_cli11_to_target_vcpkg")
