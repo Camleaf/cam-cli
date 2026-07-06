@@ -1,10 +1,9 @@
-#ifndef SGIT_PATHELPER
-#define SGIT_PATHELPER
-
+#ifndef CAMPW_ENCHELPER 
+#define CAMPW_ENCHELPER
 #include <string>
 
-int gpg_decrypt(std::string password, std::string encrypted_pat, std::string &pat);
-int gpg_encrypt(std::string password, std::string pat, std::string &encrypted_pat);
+int gpg_decrypt(std::string key, std::string encrypted_pass, std::string &pass);
+int gpg_encrypt(std::string key, std::string pass, std::string &encrypted_pass);
 
 
 #endif

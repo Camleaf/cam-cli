@@ -1,5 +1,5 @@
-#ifndef SGIT_IOHELPER
-#define SGIT_IOHELPER
+#ifndef CAMPW_IOHELPER
+#define CAMPW_IOHELPER
 
 #include <string>
 #include <iostream>

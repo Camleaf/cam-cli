@@ -24,7 +24,7 @@ class MyPassProvider : public GpgME::PassphraseProvider {
 };
 
 
-int gpg_encrypt(string password, string pat, string &encrypted_pat){
+int gpg_encrypt(string key, string pass, string &encrypted_pass){
     // call GpgME::initializeLibrary(); somewhere before this 
     auto ctx = GpgME::Context::createForProtocol(GpgME::OpenPGP);
     if (!ctx) {
@@ -35,10 +35,10 @@ int gpg_encrypt(string password, string pat, string &encrypted_pat){
     ctx->setPinentryMode(GpgME::Context::PinentryLoopback);
 
     MyPassProvider p;
-    p.password = password;
+    p.password = key;
     ctx->setPassphraseProvider(&p);
     
-    GpgME::Data input(pat.c_str(), pat.length(), false);
+    GpgME::Data input(pass.c_str(), pass.length(), false);
     GpgME::Data output;
 
     std::vector<GpgME::Key> recipients; 
@@ -55,12 +55,12 @@ int gpg_encrypt(string password, string pat, string &encrypted_pat){
     output.read(buffer.data(), buffer.size());
 
     std::vector<char> encrypted_vec = buffer;
-    encrypted_pat = string(encrypted_vec.begin(), encrypted_vec.end());
+    encrypted_pass = string(encrypted_vec.begin(), encrypted_vec.end());
 
     return 0;
 }
 
-int gpg_decrypt(string password, string encrypted_pat, string &pat){
+int gpg_decrypt(string key, string encrypted_pass, string &pass){
 
     auto ctx = GpgME::Context::createForProtocol(GpgME::OpenPGP);
     if (!ctx) {
@@ -71,11 +71,11 @@ int gpg_decrypt(string password, string encrypted_pat, string &pat){
     ctx->setPinentryMode(GpgME::Context::PinentryLoopback);
 
     MyPassProvider p;
-    p.password = password;
+    p.password = key;
     ctx->setPassphraseProvider(&p);
     
 
-    std::vector<char> encrypted_vec(encrypted_pat.begin(),encrypted_pat.end());
+    std::vector<char> encrypted_vec(encrypted_pass.begin(),encrypted_pass.end());
 
     GpgME::Data input2(encrypted_vec.data(), encrypted_vec.size(), false);
     GpgME::Data output2;
@@ -96,7 +96,7 @@ int gpg_decrypt(string password, string encrypted_pat, string &pat){
     std::vector<char> plaintext(static_cast<size_t>(totalSize));
     output2.read(plaintext.data(), plaintext.size());
 
-    pat = string(plaintext.begin(), plaintext.end());
+    pass = string(plaintext.begin(), plaintext.end());
     
     return 0;
 }
