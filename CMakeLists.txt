@@ -32,8 +32,8 @@ endif()
 
 file(REMOVE_RECURSE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}) # clear directory for new files to be built
 
-set(config_directory "$ENV{HOME}/.config/shared-git/")
-set(local_directory "$ENV{HOME}/.local/share/shared-git/")
+set(config_directory "$ENV{HOME}/.config/cam-cli/")
+set(local_directory "$ENV{HOME}/.local/share/cam-cli/")
 add_definitions(-Dconfig_dir="${config_directory}")
 add_definitions(-Dlocal_directory="${local_directory}")
 add_definitions(-Dhome_folder="$ENV{HOME}/")

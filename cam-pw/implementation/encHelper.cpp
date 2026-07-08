@@ -14,12 +14,21 @@
 using namespace std;
 
 
-class MyPassProvider : public GpgME::PassphraseProvider {
+class keyProvider : public GpgME::PassphraseProvider {
     public:
-        string password = "";
-        ~MyPassProvider() {}
+        string key= "";
+        int internalCount = 0;
+        keyProvider(string key) {this->key=key;};
+        ~keyProvider() {};
         char * getPassphrase( const char * useridHint, const char * description, bool previousWasBad, bool & canceled ){
-        return strdup(password.c_str());
+            if (previousWasBad) {
+                internalCount += 1;
+                if (internalCount >= 3){
+                    canceled = true;
+                    return nullptr;
+                }
+            }
+        return strdup(key.c_str());
     };
 };
 
@@ -34,15 +43,21 @@ int gpg_encrypt(string key, string pass, string &encrypted_pass){
     
     ctx->setPinentryMode(GpgME::Context::PinentryLoopback);
 
-    MyPassProvider p;
-    p.password = key;
+    keyProvider p(key);
     ctx->setPassphraseProvider(&p);
     
     GpgME::Data input(pass.c_str(), pass.length(), false);
     GpgME::Data output;
 
     std::vector<GpgME::Key> recipients; 
-    GpgME::EncryptionResult result = ctx->encrypt(recipients, input, output, GpgME::Context::AlwaysTrust);
+    GpgME::EncryptionResult result = ctx->encrypt(
+            recipients, 
+            input, 
+            output, 
+            static_cast<GpgME::Context::EncryptionFlags>(
+                GpgME::Context::AlwaysTrust | GpgME::Context::Symmetric
+            )
+    );
 
     if (result.error()) {
         std::cerr << "Error: " << result.error().asString() << std::endl;
@@ -70,8 +85,7 @@ int gpg_decrypt(string key, string encrypted_pass, string &pass){
     
     ctx->setPinentryMode(GpgME::Context::PinentryLoopback);
 
-    MyPassProvider p;
-    p.password = key;
+    keyProvider p(key);
     ctx->setPassphraseProvider(&p);
     
 
