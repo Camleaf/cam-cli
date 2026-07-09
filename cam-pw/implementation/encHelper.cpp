@@ -3,6 +3,7 @@
 #include "extLoad.h"
 #include <gpgme++/global.h>
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <cstring> // For strdup
 #include <gpgme++/context.h>
@@ -12,6 +13,7 @@
 #include <gpgme++/interfaces/passphraseprovider.h>
 #include <encHelper.h>
 #include <fstream>
+#include <openssl/evp.h>
 
 using namespace std;
 
@@ -115,6 +117,30 @@ int gpg_decrypt(string key, string encrypted_pass, string &pass){
     pass = string(plaintext.begin(), plaintext.end());
     
     return 0;
+}
+
+
+int generateHash(std::string unhashed, std::string &hashed){
+    EVP_MD_CTX* context = EVP_MD_CTX_new();
+    const EVP_MD* algorithm = EVP_sha512();
+    
+    unsigned char hashResult[EVP_MAX_MD_SIZE];
+    unsigned int hashLength = 0;
+
+    // do the hashing
+    EVP_DigestInit_ex(context, algorithm, nullptr);
+    EVP_DigestUpdate(context, unhashed.c_str(), unhashed.length());
+    EVP_DigestFinal_ex(context, hashResult, &hashLength);
+    
+    EVP_MD_CTX_free(context);
+
+    // convert to readable string.
+    std::stringstream ss;
+    for(unsigned int i = 0; i < hashLength; ++i) {
+        ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(hashResult[i]);
+    }
+    
+    return ss.str();
 }
 
 

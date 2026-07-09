@@ -1,0 +1,10 @@
+function(add_openssl_to_target_vcpkg targetname is_private)
+    find_package(OpenSSL CONFIG REQUIRED)
+    if(is_private EQUAL TRUE)
+        target_link_libraries(${targetname} PRIVATE OpenSSL::Crypto)
+    else ()
+        target_link_libraries(${targetname} PUBLIC OpenSSL::Crypto)
+    endif ()
+endfunction()
+
+add_package_finder("openssl" "add_openssl_to_target_vcpkg")
