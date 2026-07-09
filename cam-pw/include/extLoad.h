@@ -7,6 +7,8 @@
 
 using namespace std;
 
+const string kHashLoc = std::string(local_directory)+"pw-man/hash";
+const string kSaltLoc = std::string(local_directory)+"pw-man/salt";
 const string kDiskLoc = std::string(local_directory)+"pw-man/pw.json";
 typedef map<string,map<string,string>> json_data; 
 

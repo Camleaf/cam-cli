@@ -1,5 +1,6 @@
 // Todo turn from proof of concept to working api
 
+#include "extLoad.h"
 #include <gpgme++/global.h>
 #include <iostream>
 #include <vector>
@@ -10,6 +11,7 @@
 #include <gpgme++/decryptionresult.h>
 #include <gpgme++/interfaces/passphraseprovider.h>
 #include <encHelper.h>
+#include <fstream>
 
 using namespace std;
 
@@ -113,4 +115,17 @@ int gpg_decrypt(string key, string encrypted_pass, string &pass){
     pass = string(plaintext.begin(), plaintext.end());
     
     return 0;
+}
+
+
+// no protections, will overwrite stuff
+int store_master_key(){
+    
+}
+
+int validate_master_key(){
+    std::ifstream saltIn(kSaltLoc);
+    std::ofstream hashIn(kHashLoc);
+
+    // Use bcrypt for hashing
 }
