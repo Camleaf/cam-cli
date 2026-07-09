@@ -6,23 +6,6 @@
 #include <iostream>
 #include <stateManager.h>
 
-int pass_create_disk(string name, string encrypted_pass){
-
-    return 0;
-}
-
-
-int pass_load_disk(string name, string &encrypted_pass){
-    
-    return 0;
-}
-
-int pass_destroy_disk(string name);
-
-
-int pass_exists_disk(string name){
-    return 0;
-}
 
 int file_exists_disk(string filename){
     return ifstream(filename).good();
@@ -52,7 +35,7 @@ int load_disk(json_data &enc_json){
 }
 
 
-int write_disk(json_data &enc_json){
+int write_disk(json_data enc_json){
     nlohmann::json data = enc_json;
     std::ofstream outfile (kDiskLoc);
 
