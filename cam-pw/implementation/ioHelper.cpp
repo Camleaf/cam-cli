@@ -1,5 +1,7 @@
+#include <algorithm>
 #include <ioHelper.h>
 #include <cstdio>
+#include <random>
 #include <vector>
 #include <iostream>
 
@@ -52,3 +54,18 @@ int get_input_option(string message, string &choice, vector<string> options){
     }
     return 0;
 }
+
+
+// Random string gen found from some internet forum 10 yrs ago xd.
+std::string random_string(size_t len) {
+    std::string const allowed_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_!@#$%^&*()/\\:;.,<>~?|+=-~`";
+    std::mt19937_64 gen { std::random_device()() };
+
+    std::uniform_int_distribution<size_t> dist { 0, allowed_chars.length()-1 };
+
+    std::string ret;
+
+    std::generate_n(std::back_inserter(ret), len, [&] { return allowed_chars[dist(gen)]; });
+    return ret;
+}
+

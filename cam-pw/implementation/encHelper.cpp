@@ -2,8 +2,10 @@
 
 #include "extLoad.h"
 #include <gpgme++/global.h>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <string>
 #include <vector>
 #include <cstring> // For strdup
 #include <gpgme++/context.h>
@@ -134,24 +136,14 @@ int generateHash(std::string unhashed, std::string &hashed){
     
     EVP_MD_CTX_free(context);
 
-    // convert to readable string.
+    // convert to readable hex string.
     std::stringstream ss;
     for(unsigned int i = 0; i < hashLength; ++i) {
-        ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(hashResult[i]);
+        ss << std::hex <<  std::setfill('0') << std::setw(2) << static_cast<unsigned>(hashResult[i]);
     }
     
-    return ss.str();
+    hashed = ss.str();
+
+    return 0;
 }
 
-
-// no protections, will overwrite stuff
-int store_master_key(){
-    
-}
-
-int validate_master_key(){
-    std::ifstream saltIn(kSaltLoc);
-    std::ofstream hashIn(kHashLoc);
-
-    // Use bcrypt for hashing
-}
