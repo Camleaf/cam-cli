@@ -1,6 +1,7 @@
 // Todo turn from proof of concept to working api
 
 #include "extLoad.h"
+#include "ioHelper.h"
 #include <gpgme++/global.h>
 #include <iomanip>
 #include <iostream>
@@ -76,12 +77,14 @@ int gpg_encrypt(string key, string pass, string &encrypted_pass){
     output.read(buffer.data(), buffer.size());
 
     std::vector<char> encrypted_vec = buffer;
-    encrypted_pass = string(encrypted_vec.begin(), encrypted_vec.end());
+    encrypted_pass = binary_to_hex(string(encrypted_vec.begin(), encrypted_vec.end()));
 
     return 0;
 }
 
 int gpg_decrypt(string key, string encrypted_pass, string &pass){
+    
+    encrypted_pass = hex_to_binary(encrypted_pass);
 
     auto ctx = GpgME::Context::createForProtocol(GpgME::OpenPGP);
     if (!ctx) {

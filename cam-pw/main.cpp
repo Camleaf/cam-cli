@@ -1,43 +1,47 @@
 #include <CLI/App.hpp>
 #include <ioHelper.h>
+#include <extLoad.h>
+#include <stateManager.h>
+#include <encHelper.h>
+#include <gpgme++/global.h>
 // maybe use like CLI11 or some other cli tool for parseing input
 
 using namespace std;
 
 int main (int argc, char **argv) {
     CLI::App app;
-     
-    auto configSeparator = app.add_option_group("configSeparator");
+    GpgME::initializeLibrary(); 
     
-    string user;
-    configSeparator->add_option("username", "the username of the desired password");
-    
-    CLI::App* subConfig = configSeparator ->add_subcommand("config", "configure settings");  
-    
-    configSeparator->require_option(1);
-    
-    bool deleteFlag, addFlag;
-    app.add_flag("-d", deleteFlag,"");
-    app.add_flag("-a", addFlag,"");
-    
-    bool masterPassFlag;
-    auto flagGroup = subConfig->add_option_group("config_flag_group");
-    flagGroup->add_flag("--master", masterPassFlag,"The flag to determine if the master password should be modified");
-    flagGroup->require_option(1);
-
     CLI11_PARSE(app,argc,argv);
     
-    // Check for config commands first
     
-    if (app.got_subcommand(subConfig)){
-        if (masterPassFlag){
+    std::string vef;
+    if (get_valid_input("enter pass", vef, is_key_master)){
+        std::cout << "pass verified " << endl;
+    } else {
+        std::cout << "pass incorrect" << endl;
+    }
+    
+    
+    std::string service,user,pass;
 
-        }
+    get_valid_input("enter service: ", service);
+    get_valid_input("enter username: ", user);
+    get_valid_input("enter pass: ",pass);
 
-        return 0;
-    }  
+    std::string master_key, enc_pass;
+    prompt_for_master(master_key);
 
-    // Do regular command next
+    gpg_encrypt(master_key,pass,enc_pass);
+    add_password(service,user,enc_pass);
+    
+    std::string enc_pass2,dec_pass;
+    query_password(service,user,enc_pass2);
+    std::cout << enc_pass2 << std::endl;
+    
+    gpg_decrypt(master_key, enc_pass2, dec_pass);
+    std::cout << dec_pass << std::endl;
+    
 
     return 0;
 }

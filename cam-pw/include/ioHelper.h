@@ -5,15 +5,17 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
+bool check_if_right_pw_chars(std::string value);
+typedef bool (*validityCallback)(std::string value);
 
-bool check_if_right_pw_chars(string value);
-typedef bool (*validityCallback)(string value);
-
-bool empty_validity_callback(string value);
+bool empty_validity_callback(std::string value);
 
 void wipe_n_lines(int n);
-int get_valid_input(string message, string &choice, validityCallback callback=check_if_right_pw_chars);
-int get_input_option(string message, string &choice, vector<string> options);
+int get_valid_input(std::string message, std::string &choice, validityCallback callback=check_if_right_pw_chars);
+int get_input_option(std::string message, std::string &choice, std::vector<std::string> options);
 std::string random_string(size_t len = 15);
+
+std::string binary_to_hex(const std::string& binary_str);
+std::string hex_to_binary(const std::string& hex_str);
+
 #endif

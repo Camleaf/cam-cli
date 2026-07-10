@@ -8,14 +8,15 @@
 #include <ioHelper.h>
 
 
-int file_exists_disk(string filename){
-    return ifstream(filename).good();
+int file_exists_disk(std::string filename){
+    return std::ifstream(filename).good();
 }
 
 
 int load_disk(json_data &enc_json){
     if (!file_exists_disk(kDiskLoc)){
         // create empty json file
+        std::filesystem::create_directories(std::filesystem::path(kParentLoc));
         std::ofstream outfile (kDiskLoc);
         outfile << "{}";
         outfile.close();
@@ -26,9 +27,9 @@ int load_disk(json_data &enc_json){
     try {
         data = nlohmann::json::parse(inStream);
     } catch (nlohmann::json::parse_error e) {
-        cout << e.what() << endl << endl;
-        cout << "cam-cli: Your password document has been modified externally and the JSON structure has been corrupted, you can fix it manually at "
-            << kDiskLoc << endl;
+        std::cout << e.what() << std::endl << std::endl;
+        std::cout << "cam-cli: Your password document has been modified externally and the JSON structure has been corrupted, you can fix it manually at "
+            << kDiskLoc << std::endl;
     }
     
     enc_json = data.get<json_data>();
@@ -37,6 +38,9 @@ int load_disk(json_data &enc_json){
 
 
 int write_disk(json_data enc_json){
+     if (!file_exists_disk(kDiskLoc)){
+        std::filesystem::create_directories(std::filesystem::path(kParentLoc));
+    }
     nlohmann::json data = enc_json;
     std::ofstream outfile (kDiskLoc);
 
@@ -55,7 +59,7 @@ int write_master_key_disk(std::string key){
         // if both exist, then same process as above, but only show the risky options if password fails.
         // the transfer must manually decrypt every single password with old password then re-encrypt with new one
     
-        return 1; // remove once block implemented
+        //return 1; // remove once block implemented
     }
     
     std::string salt = random_string(4);
@@ -80,7 +84,7 @@ bool is_key_master(std::string key){
 
     std::getline(saltIn,salt);
     std::getline(hashIn,hash);
-    generateHash(hash+salt,challenge);
+    generateHash(key+salt,challenge);
 
     if (challenge == hash){
         return true;

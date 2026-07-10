@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <ioHelper.h>
 #include <cstdio>
+#include <iomanip>
 #include <random>
 #include <vector>
 #include <iostream>
@@ -9,27 +10,27 @@
  */ 
 void wipe_n_lines(int n){
     for (int i = 0; i < n; i++){
-        cout << "\033[A\033[2K";
+        std::cout << "\033[A\033[2K";
     };
-    cout << "\r";
+    std::cout << "\r";
 }
 
-bool check_if_right_pw_chars(string value){
-    return value.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_!@#$%^&*()/\\:;.,<>~?|+=-~`") == string::npos
+bool check_if_right_pw_chars(std::string value){
+    return value.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_!@#$%^&*()/\\:;.,<>~?|+=-~`") == std::string::npos
             &&
             value != "";
 }
 
-bool empty_validity_callback(string value) { return true;}
+bool empty_validity_callback(std::string value) { return true;}
 
 
-int get_valid_input(string message, string &choice, validityCallback callback){
+int get_valid_input(std::string message, std::string &choice, validityCallback callback){
 
     for (int idx = 0; idx < 3; idx++){
         
-        cout << message;
-        cout << " (" << idx + 1 << "/3): ";
-        getline(cin, choice);
+        std::cout << message;
+        std::cout << " (" << idx + 1 << "/3): ";
+        std::getline(std::cin, choice);
 
         if (callback(choice)){
             return 1;
@@ -40,13 +41,13 @@ int get_valid_input(string message, string &choice, validityCallback callback){
     return 0;
 }
 
-int get_input_option(string message, string &choice, vector<string> options){
+int get_input_option(std::string message, std::string &choice, std::vector<std::string> options){
     for (int idx = 0; idx < 3; idx++){
-        cout << message;
-        cout << " (" << idx + 1 << "/3): ";
-        getline(cin, choice);
+        std::cout << message;
+        std::cout << " (" << idx + 1 << "/3): ";
+        std::getline(std::cin, choice);
         
-        for (string option : options) {
+        for (std::string option : options) {
             if (choice == option) return 1;
         }
 
@@ -69,3 +70,27 @@ std::string random_string(size_t len) {
     return ret;
 }
 
+
+
+
+
+// Some conversion code from stackoverflow
+std::string binary_to_hex(const std::string& binary_str) {
+    std::stringstream ss;
+    ss << std::hex << std::setfill('0');
+    for (unsigned char c : binary_str) {
+        ss << std::setw(2) << static_cast<int>(c);
+    }
+    return ss.str();
+}
+
+std::string hex_to_binary(const std::string& hex_str) {
+    std::string binary_str;
+    binary_str.reserve(hex_str.length() / 2);
+    for (size_t i = 0; i < hex_str.length(); i += 2) {
+        std::string byte_str = hex_str.substr(i, 2);
+        char byte = static_cast<char>(strtol(byte_str.c_str(), nullptr, 16));
+        binary_str.push_back(byte);
+    }
+    return binary_str;
+}
