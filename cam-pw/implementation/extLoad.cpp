@@ -1,3 +1,4 @@
+#include "state.h"
 #include <nlohmann/json_fwd.hpp>
 #include <extLoad.h>
 #include <fstream>
@@ -50,10 +51,9 @@ int write_disk(json_data enc_json){
 
 
 int write_master_key_disk(std::string key){
-    json_data enc_json;
-    load_disk(enc_json);
+    load_disk(loaded_data);
 
-    if (enc_json.size() != 0){ // encrypted data is already populated
+    if (loaded_data.size() != 0){ // encrypted data is already populated
         // if existing salt doesn't exist, add prompt to overwrite.
         // if existing hash doesn;t exist, add password prompt for old password add warning saying that verification won't exist, and ask if willing to risk corrupt during password encryption transfer, or just do overwrite.
         // if both exist, then same process as above, but only show the risky options if password fails.
@@ -72,6 +72,8 @@ int write_master_key_disk(std::string key){
 
     hashFile << hash;
     saltFile << salt;
+
+    load_disk(loaded_data);
     return 0;
 }
 

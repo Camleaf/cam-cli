@@ -6,7 +6,7 @@
 #include <extLoad.h>
 #include <vector>
 #include <rapidfuzz/fuzz.hpp>
-
+#include <state.h>
 
 struct fuzzy_value_wrapper {
     std::string name;
@@ -16,9 +16,8 @@ struct fuzzy_value_wrapper {
 
 
 // If search
-int query_data(std::vector<std::string> &ordered_query_result, std::string service){
-    json_data enc_data;
-    load_disk(enc_data);
+int query_by_service(std::vector<serviceUser> &ordered_query_result, std::string service){
+    load_disk(loaded_data);
     
     // Use fuzzy finder to get best "matches".
     // Will have a match cutoff
@@ -28,7 +27,7 @@ int query_data(std::vector<std::string> &ordered_query_result, std::string servi
     };
 
     std::priority_queue<fuzzy_value_wrapper,std::vector<fuzzy_value_wrapper>, fuzzScoreLessThan> scorePQ;
-    for (json_data::iterator it = enc_data.begin(); it != enc_data.end(); ++it) {
+    for (json_data::iterator it = loaded_data.begin(); it != loaded_data.end(); ++it) {
         double score = rapidfuzz::fuzz::token_sort_ratio(service,it->first);
         
         if (score < 70) continue;
@@ -40,10 +39,17 @@ int query_data(std::vector<std::string> &ordered_query_result, std::string servi
             }
         );
     }
-
+    
+    // Iterate over services and subpasswords to add to serviceuser vector.
     ordered_query_result.clear();
     while (scorePQ.size()>0){
-        ordered_query_result.push_back(scorePQ.top().name);
+        for (std::map<std::string,std::string>::iterator it = loaded_data[scorePQ.top().name].begin(); it != loaded_data[scorePQ.top().name].end(); ++it){
+            ordered_query_result.push_back({
+                scorePQ.top().name, // service
+                it->first,          // name
+                it->second         // password
+            });
+        }
         scorePQ.pop();
     }
 
@@ -53,36 +59,46 @@ int query_data(std::vector<std::string> &ordered_query_result, std::string servi
 
 
 // Get-All version
-int query_data(std::vector<std::string> &ordered_query_result){
+int query_all(std::vector<serviceUser> &ordered_query_result){
     
-    json_data enc_data;
-    load_disk(enc_data);
+    load_disk(loaded_data);
     ordered_query_result.clear();
 
-    for (json_data::iterator it = enc_data.begin(); it != enc_data.end(); ++it) {
-        ordered_query_result.push_back(it->first);
+    for (json_data::iterator it = loaded_data.begin(); it != loaded_data.end(); ++it) {
+        for (std::map<std::string,std::string>::iterator it2 = loaded_data[it->first].begin(); it2 != loaded_data[it->first].end(); ++it2){
+                ordered_query_result.push_back({
+                    it->first,   // service
+                    it2->first,          // name
+                    it2->second         // password
+                });
+        }
     }
 
     return 0;
 }
 
+int query_by_username(std::vector<serviceUser> &ordered_query_result){
+    load_disk(loaded_data);
+    
+}
+
 
 
 int query_password(std::string service, std::string username, std::string &enc_pass){
-    json_data enc_data;
-    load_disk(enc_data);
+    load_disk(loaded_data);
      
-    if (!enc_data.contains(service)){
+    if (!loaded_data.contains(service)){
         std::cout << "Service `" << service << "` does not exist" << std::endl;
         return 1;
     } 
 
-    if (!enc_data[service].contains(username)){
+    if (!loaded_data[service].contains(username)){
         std::cout << "Username `" << username << "` does not exist in service `" << service  << "`" << std::endl;
         return 1;
     }
-
-    enc_pass = enc_data[service][username];
+    
+    enc_pass = loaded_data[service][username];
+    
     return 0;
 }
 
@@ -100,14 +116,12 @@ int prompt_for_master(std::string &master_key){
 
 
 int add_password(std::string service, std::string username, std::string enc_pass){
-    json_data enc_data;
-    load_disk(enc_data);
     
-    if (!enc_data.contains(service)){
-        enc_data.insert_or_assign(service,std::map<std::string,std::string>());
+    if (!loaded_data.contains(service)){
+        loaded_data.insert_or_assign(service,std::map<std::string,std::string>());
     } 
 
-    if (enc_data[service].contains(username)){
+    if (loaded_data[service].contains(username)){
         // add overwrite code
         std::string opt;
         get_input_option("Overwrite existing password with service (y/n) `" + service + "` and user `" + username + "`", opt, {"y","n"});
@@ -116,17 +130,16 @@ int add_password(std::string service, std::string username, std::string enc_pass
         }
     } 
 
-    enc_data[service].insert_or_assign(username,enc_pass);
+    loaded_data[service].insert_or_assign(username,enc_pass);
 
-    write_disk(enc_data);        
+    write_disk(loaded_data);        
+    load_disk(loaded_data);
     return 0;
 }
 
 
 
 int delete_password(std::string service, std::string username){
-    json_data enc_data;
-    load_disk(enc_data);
 
     std::string temp;
     if (query_password(service,username, temp)){
@@ -139,12 +152,16 @@ int delete_password(std::string service, std::string username){
 
 
 
-    if (enc_data[service].size() == 1) {
-        enc_data.erase(service);
+    if (loaded_data[service].size() == 1) {
+        loaded_data.erase(service);
     } else {
-        enc_data[service].erase(username);
+        loaded_data[service].erase(username);
     }
 
-    write_disk(enc_data);
+    write_disk(loaded_data);
+    load_disk(loaded_data);
     return 0;
 }
+
+
+

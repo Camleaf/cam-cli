@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 #include <ioHelper.h>
 #include <cstdio>
 #include <iomanip>
@@ -55,6 +56,12 @@ int get_input_option(std::string message, std::string &choice, std::vector<std::
     }
     return 0;
 }
+
+int formatLine(std::string service, std::string username, std::string password, std::array<int, 3> cols){
+    std::cout << std::setw(cols[0]) << service << std::setw(cols[1]) << username << std::setw(cols[2]) << password;
+    return 0;
+}
+
 
 
 // Random string gen found from some internet forum 10 yrs ago xd.
