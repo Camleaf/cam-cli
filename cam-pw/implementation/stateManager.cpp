@@ -8,10 +8,10 @@
 #include <rapidfuzz/fuzz.hpp>
 #include <state.h>
 
-struct fuzzy_value_wrapper {
-    std::string name;
-    double score;
-};
+ 
+bool compareScore(const serviceUser r1, const serviceUser r2) { return r1.queryScore > r2.queryScore; }
+
+
 
 
 
@@ -21,37 +21,28 @@ int query_by_service(std::vector<serviceUser> &ordered_query_result, std::string
     
     // Use fuzzy finder to get best "matches".
     // Will have a match cutoff
-    struct fuzzScoreLessThan
-    {
-        bool operator()(const fuzzy_value_wrapper r1, const fuzzy_value_wrapper r2) const { return r1.score > r2.score; }
-    };
+    ordered_query_result.clear();
+    
 
-    std::priority_queue<fuzzy_value_wrapper,std::vector<fuzzy_value_wrapper>, fuzzScoreLessThan> scorePQ;
     for (json_data::iterator it = loaded_data.begin(); it != loaded_data.end(); ++it) {
         double score = rapidfuzz::fuzz::token_sort_ratio(service,it->first);
         
-        if (score < 70) continue;
-
-        scorePQ.push(
-            {
-                it->first,
-                score
-            }
-        );
-    }
-    
-    // Iterate over services and subpasswords to add to serviceuser vector.
-    ordered_query_result.clear();
-    while (scorePQ.size()>0){
-        for (std::map<std::string,std::string>::iterator it = loaded_data[scorePQ.top().name].begin(); it != loaded_data[scorePQ.top().name].end(); ++it){
+        if (score < 40) continue;
+        
+        service_group x = it->second;
+        
+        for (service_group::iterator it2 = x.begin(); it2 != x.end(); ++it2){
             ordered_query_result.push_back({
-                scorePQ.top().name, // service
-                it->first,          // name
-                it->second         // password
+                score,
+                it->first,
+                it2->first,
+                it2->second
             });
-        }
-        scorePQ.pop();
+        }    
+        
     }
+   
+    std::sort(ordered_query_result.begin(),ordered_query_result.end(),compareScore);
 
     return 0;
 }
@@ -67,6 +58,7 @@ int query_all(std::vector<serviceUser> &ordered_query_result){
     for (json_data::iterator it = loaded_data.begin(); it != loaded_data.end(); ++it) {
         for (std::map<std::string,std::string>::iterator it2 = loaded_data[it->first].begin(); it2 != loaded_data[it->first].end(); ++it2){
                 ordered_query_result.push_back({
+                    100,
                     it->first,   // service
                     it2->first,          // name
                     it2->second         // password
@@ -77,9 +69,37 @@ int query_all(std::vector<serviceUser> &ordered_query_result){
     return 0;
 }
 
-int query_by_username(std::vector<serviceUser> &ordered_query_result){
+int query_by_username(std::vector<serviceUser> &ordered_query_result, std::string username){
     load_disk(loaded_data);
     
+    // Use fuzzy finder to get best "matches".
+    // Will have a match cutoff
+    ordered_query_result.clear();
+    
+
+    for (json_data::iterator it = loaded_data.begin(); it != loaded_data.end(); ++it) {
+        
+        service_group x = it->second;
+        
+        for (service_group::iterator it2 = x.begin(); it2 != x.end(); ++it2){     
+            double score = rapidfuzz::fuzz::token_sort_ratio(username,it2->first);
+            
+            if (score < 40) continue;
+
+            ordered_query_result.push_back({
+                score,
+                it->first,
+                it2->first,
+                it2->second
+            });
+        }    
+        
+    }
+   
+    std::sort(ordered_query_result.begin(),ordered_query_result.end(),compareScore);
+
+    return 0;
+
 }
 
 

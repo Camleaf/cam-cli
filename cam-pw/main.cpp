@@ -29,19 +29,21 @@ int main (int argc, char **argv) {
     get_valid_input("enter username: ", user);
     get_valid_input("enter pass: ",pass);
 
-    std::string master_key, enc_pass;
-    prompt_for_master(master_key);
-
-    gpg_encrypt(master_key,pass,enc_pass);
+    std::string enc_pass;
+    
+    gpg_encrypt(vef,pass,enc_pass);
+    
+    load_disk(loaded_data);
     add_password(service,user,enc_pass);
     
-    std::string enc_pass2,dec_pass;
-    query_password(service,user,enc_pass2);
-    std::cout << enc_pass2 << std::endl;
+
+    std::string inpt;
+
+    get_valid_input("enter service to query: ",inpt);
     
-    gpg_decrypt(master_key, enc_pass2, dec_pass);
-    std::cout << dec_pass << std::endl;
-    
+    std::vector<serviceUser> x;
+    query_by_service(x,inpt);
+    outputQuery(vef,x);
 
     return 0;
 }

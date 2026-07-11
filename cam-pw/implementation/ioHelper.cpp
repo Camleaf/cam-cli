@@ -1,3 +1,4 @@
+#include "encHelper.h"
 #include <algorithm>
 #include <array>
 #include <ioHelper.h>
@@ -6,6 +7,7 @@
 #include <random>
 #include <vector>
 #include <iostream>
+#include <state.h>
 
 /* Wipes n previous lines in the console, inclusive of current line.
  */ 
@@ -58,9 +60,30 @@ int get_input_option(std::string message, std::string &choice, std::vector<std::
 }
 
 int formatLine(std::string service, std::string username, std::string password, std::array<int, 3> cols){
-    std::cout << std::setw(cols[0]) << service << std::setw(cols[1]) << username << std::setw(cols[2]) << password;
+    std::cout << std::left << std::setw(cols[0]) << service << std::setw(cols[1]) << username << std::setw(cols[2]) << password << std::endl;
     return 0;
 }
+
+
+int outputQuery(std::string master_key, std::vector<serviceUser> &ordered_query_result){
+    std::string prev_service = "";
+    for (serviceUser x : ordered_query_result){
+        std::string pass_decrypt;
+        gpg_decrypt(master_key, x.pass, pass_decrypt);
+        
+        formatLine(
+                (x.service!=prev_service) ? x.service : "" ,
+                x.user,
+                pass_decrypt,
+                {15,15,15}
+        );
+
+        prev_service = x.service;
+    }
+    return 0;
+}
+
+
 
 
 
@@ -76,10 +99,6 @@ std::string random_string(size_t len) {
     std::generate_n(std::back_inserter(ret), len, [&] { return allowed_chars[dist(gen)]; });
     return ret;
 }
-
-
-
-
 
 // Some conversion code from stackoverflow
 std::string binary_to_hex(const std::string& binary_str) {
@@ -101,3 +120,6 @@ std::string hex_to_binary(const std::string& hex_str) {
     }
     return binary_str;
 }
+
+
+

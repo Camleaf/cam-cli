@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <state.h>
 
 bool check_if_right_pw_chars(std::string value);
 typedef bool (*validityCallback)(std::string value);
@@ -14,6 +15,7 @@ void wipe_n_lines(int n);
 int get_valid_input(std::string message, std::string &choice, validityCallback callback=check_if_right_pw_chars);
 int get_input_option(std::string message, std::string &choice, std::vector<std::string> options);
 std::string random_string(size_t len = 15);
+int outputQuery(std::string master_key, std::vector<serviceUser> &ordered_query_result);
 
 std::string binary_to_hex(const std::string& binary_str);
 std::string hex_to_binary(const std::string& hex_str);
