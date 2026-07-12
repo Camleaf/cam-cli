@@ -78,7 +78,7 @@ int outputQuery(std::vector<serviceUser> &ordered_query_result, std::string mast
                 (x.service!=prev_service) ? x.service : "" ,
                 x.user,
                 (!master_key.empty()) ? pass_decrypt : "",
-                {15,15,15}
+                {15,25,15}
         );
 
         prev_service = x.service;

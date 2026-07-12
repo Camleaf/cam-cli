@@ -40,21 +40,23 @@ int main (int argc, char **argv) {
 
     std::vector<serviceUser> x;
     std::string master_key, pass, enc_pass = "";
+    load_disk(loaded_data);
     if (subAdd->parsed()){
         prompt_for_master(master_key);
         get_valid_input("Enter password: ", pass);
         gpg_encrypt(master_key,pass,enc_pass);
         add_password(service,username,enc_pass);
-        cout << "Added user`" << username << "`to service`" << service <<"`" << endl;
+        wipe_n_lines(1);
+        cout << "Added user`" << username << "`to service `" << service <<"`" << endl;
     } else if (subRemove->parsed()){
         prompt_for_master(master_key);
         delete_password(service,username);
-        cout << "Removed user`" << username << "` from service`" << service <<"`" << endl;
+        cout << "Removed user`" << username << "` from service `" << service <<"`" << endl;
     } else if (subGet->parsed()){
         prompt_for_master(master_key);
         query_password(service,username,enc_pass);
         gpg_decrypt(master_key,enc_pass,pass);
-        formatLine(service,username,pass,{15,15,15});
+        formatLine(service,username,pass,{15,25,15});
     } else if (subList->parsed()){
          
         if (!query.empty()){
