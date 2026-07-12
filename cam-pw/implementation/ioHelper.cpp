@@ -65,20 +65,26 @@ int formatLine(std::string service, std::string username, std::string password, 
 }
 
 
-int outputQuery(std::string master_key, std::vector<serviceUser> &ordered_query_result){
+int outputQuery(std::vector<serviceUser> &ordered_query_result, std::string master_key, int result_count){
+    // If no master key is passed, will not attempt decryption. 
     std::string prev_service = "";
+    int idx = 0;
     for (serviceUser x : ordered_query_result){
         std::string pass_decrypt;
-        gpg_decrypt(master_key, x.pass, pass_decrypt);
-        
+        if (!master_key.empty()){
+            gpg_decrypt(master_key, x.pass, pass_decrypt);
+        }
         formatLine(
                 (x.service!=prev_service) ? x.service : "" ,
                 x.user,
-                pass_decrypt,
+                (!master_key.empty()) ? pass_decrypt : "",
                 {15,15,15}
         );
 
         prev_service = x.service;
+        idx++;
+
+        if (idx > result_count) break;
     }
     return 0;
 }

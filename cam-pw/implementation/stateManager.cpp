@@ -131,6 +131,7 @@ int prompt_for_master(std::string &master_key){
     }
     
     master_key = challenge;
+    wipe_n_lines(1);
     return 0;
 }
 
