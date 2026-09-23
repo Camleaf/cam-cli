@@ -2,6 +2,8 @@ import json
 from fastapi import FastAPI, HTTPException, Response
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse
+
+from .db_operations import PWManager
 from .auth import PasswordSubmission, checkPassword
 # routers
 from starlette.middleware.cors import CORSMiddleware
@@ -27,9 +29,7 @@ def verifyPassword(passwordSubmission:PasswordSubmission):
 
 # include routers
 #############################################################################################
-#app.include_router(ScoreboardRouter)
-#app.include_router(EmailRouter)
-
+app.include_router(PWManager)
 
 
 @app.exception_handler(RateLimitExceeded)
