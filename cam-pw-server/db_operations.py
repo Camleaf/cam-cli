@@ -57,13 +57,15 @@ async def retrieveStored(passwordSubmission:PasswordSubmission, data:ContentBox)
     try:
         collectionRef = db.collection('pwds')
 
-        ''' 
+        
         batch = db.batch()
-        batch.set(docRef,req['games'])
-        batch.set(docRef2,req['teams'])
-        batch.set(docRef3, {'scoreboard':req['enabled']})
+        
+        for service in loaded_data:
+            #collectionRef.add() # use this func find out how to configure merge settings
+            #.set(loaded_data[service])
+            ... 
         batch.commit()
-        '''
+        
     except KeyError as e:
         return HTTPException(422, detail="Missing fields")
     except Exception as e:
