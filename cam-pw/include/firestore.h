@@ -5,11 +5,9 @@
 #include <state.h>
 
 
-const std::string kParentLoc = std::string(local_directory) + "pw-man/";
+const std::string kWebAddress = "https://cam-cli.vercel.app";
 
 
-int load_disk(json_data &enc_json);
-int write_disk(json_data enc_json);
-int write_master_key_disk(std::string key);
-bool is_key_master(std::string key);
+int load_firebase(json_data &enc_json);
+int write_firebase(json_data enc_json, bool prune=false);
 #endif

@@ -8,7 +8,6 @@
 #include <vector>
 #include <iostream>
 #include <state.h>
-
 /* Wipes n previous lines in the console, inclusive of current line.
  */ 
 void wipe_n_lines(int n){
