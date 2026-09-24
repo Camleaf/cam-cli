@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from fastapi.responses import HTMLResponse
 
 from src.db_operations import PWManager
-from src.auth import PasswordSubmission, checkPassword
+from util.auth import PasswordSubmission, checkPassword
 # routers
 from starlette.middleware.cors import CORSMiddleware
 from slowapi.util import get_remote_address

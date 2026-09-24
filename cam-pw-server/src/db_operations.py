@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Request, Response
-from src.auth import db, PasswordSubmission, checkPassword
+from util.auth import db, PasswordSubmission, checkPassword
 from typing import Any, final
 from pydantic import BaseModel
 from google.cloud import firestore_v1
