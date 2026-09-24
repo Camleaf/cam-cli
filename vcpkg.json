@@ -1,11 +1,27 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
-  "name": "camleaf-shared-git",
-  "description": "<Insert description here>",
+  "name": "camleaf-cam-cli",
+  "description": "Personal terminal utilities",
   "dependencies": [
-    "cli11",
-    "nlohmann-json",
-    "rapidfuzz-cpp",
-    "openssl"
+    {
+        "name":"cli11",
+        "version>=": "2.7.2"
+    },
+    {
+        "name":"nlohmann-json",
+        "version>=": "3.12.0"
+    },
+    {
+        "name":"rapidfuzz-cpp",
+        "version>=": "3.3.3"
+    },
+    {
+        "name":"openssl",
+        "version>=": "3.6.4"
+    },
+    {
+        "name":"cpr",
+        "version>=": "1.14.2"    
+    }
   ]
 }
