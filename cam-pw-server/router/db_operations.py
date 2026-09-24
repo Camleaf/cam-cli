@@ -22,7 +22,6 @@ async def retrieveStored(passwordSubmission:PasswordSubmission):
     try:
 
         x = db.collection('pwds').get()
-        print(x)
         for y in x:
             z = y.to_dict()
             loaded_data[y.id] = z if z is not None else {}
