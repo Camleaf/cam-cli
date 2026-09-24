@@ -38,16 +38,14 @@ async def retrieveStored(passwordSubmission:PasswordSubmission):
 
 
 MERGE,PRUNE = range(2)
-CURRENT,INCOMING = range(2)
 
 class ContentBox(BaseModel):
     content:dict[str,dict[str,str]]
     mode:int
-    priority:int
 
 
 @PWManager.post("/update")
-async def retrieveStored(passwordSubmission:PasswordSubmission, data:ContentBox):
+async def updateStored(passwordSubmission:PasswordSubmission, data:ContentBox):
 
 
     if not checkPassword(passwordSubmission.password):
@@ -57,14 +55,30 @@ async def retrieveStored(passwordSubmission:PasswordSubmission, data:ContentBox)
     try:
         collectionRef = db.collection('pwds')
 
-        
+        # adding items
         batch = db.batch()
         
         for service in loaded_data:
-            #collectionRef.add() # use this func find out how to configure merge settings
-            #.set(loaded_data[service])
-            ... 
+            doc_ref = collectionRef.document(service)
+            if data.mode == PRUNE:
+                batch.set(doc_ref,loaded_data[service])
+            else:
+                batch.set(doc_ref,loaded_data[service],merge=True)
+                
+            
         batch.commit()
+        
+        #deleting items if prune
+        if (data.mode==PRUNE):
+            batch = db.batch()
+
+            prune_targets = set([x.id for x in collectionRef.stream()]).difference(set(loaded_data.keys()))
+            
+            for x in prune_targets:
+                doc_ref = collectionRef.document(x)
+                batch.delete(doc_ref)
+
+            batch.commit()
         
     except KeyError as e:
         return HTTPException(422, detail="Missing fields")
