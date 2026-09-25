@@ -34,19 +34,13 @@ int main (int argc, char **argv) {
     subList->add_option("query",query);
     
     // firebase_key_update, master_key_update under config
-    bool backend_key_update, master_key_update;
     CLI::App* config = app.add_subcommand("config");
-    auto configGroup = config->add_option_group("configGroup","group with various config flag options");
-    configGroup->add_flag("backend",backend_key_update,"Flag to indicate that the backend key is to be updated");
-    configGroup->add_flag("master",master_key_update,"Flag to indicate that the master key is to be updated NOT IMPLEMENTED");
-    configGroup->require_option(1);
+    auto backend_key_update = config->add_subcommand("backend","Update backend access key");
+    auto master_key_update = config->add_subcommand("master","Update master key -- NOT IMPLETENTED");
 
-    bool backend_pull, backend_push;
     CLI::App* backend = app.add_subcommand("backend");
-    auto backendGroup = config->add_option_group("configGroup","group with various config flag options");
-    backendGroup->add_flag("pull",backend_pull,"Flag to indicate that password data is to be pulled from the backend");
-    backendGroup->add_flag("push",backend_push,"Flag to indicate that password data is to be pushed to the backend");
-    backendGroup->require_option(1);
+    auto backend_pull = backend->add_subcommand("pull","Pulls password data from backend");
+    auto backend_push = backend->add_subcommand("push","Pushes password data to backend, either merge or prune");
 
     CLI11_PARSE(app,argc,argv);
     
@@ -95,9 +89,9 @@ int main (int argc, char **argv) {
 
     } else if (config->parsed()) {
         
-        if (master_key_update){
+        if (master_key_update->parsed()){
             cout << "Master key update not implemented" << endl;
-        } else if (backend_key_update){
+        } else if (backend_key_update->parsed()){
             prompt_for_master(master_key);
             get_valid_input("Enter new backend key: ",pass);
             gpg_encrypt(master_key,pass,enc_pass);
@@ -106,7 +100,7 @@ int main (int argc, char **argv) {
 
 
     } else if (backend->parsed()){ // push and pull to backend
-        if (backend_pull){ // pull and load on local disk
+        if (backend_pull->parsed()){ // pull and load on local disk
             prompt_for_master(master_key);
             load_backend_key_disk(enc_pass);
             gpg_decrypt(master_key,enc_pass,pass);
@@ -114,12 +108,14 @@ int main (int argc, char **argv) {
                 return 1; // We don't want to overwrite local if there is an issue grabbing the data.
             };
             write_disk(loaded_data);
-    } else if (backend_push){ // push and store on backend
+
+
+    } else if (backend_push->parsed()){ // push and store on backend
             prompt_for_master(master_key);
             load_backend_key_disk(enc_pass);
             gpg_decrypt(master_key,enc_pass,pass);
             std::string choice;
-            get_input_option("Merge or overwrite data on backend? (merge/overwrite)",choice,{"m","o"});
+            get_input_option("Merge or overwrite data on backend? (m/o)",choice,{"m","o"});
             store_backend(loaded_data, pass,(choice=="m")?0:1);
         }
 

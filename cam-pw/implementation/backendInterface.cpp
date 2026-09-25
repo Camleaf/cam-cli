@@ -41,16 +41,21 @@ int load_backend(json_data &enc_json, std::string pw){
 
 int store_backend(json_data enc_json, std::string pw, bool prune){
 
-    json content = {
-        {"passwordSubmission", {"password",pw}},
-        {"data",{"content",enc_json},{"mode",prune}}
-    };
-
+    json content;
+    content["passwordSubmission"]["password"] = pw;
+    content["data"]["content"] = enc_json;
+    content["data"]["mode"] = prune;
 
     cpr::Response r = cpr::Post(
-        cpr::Url{kWebAddress+"/retrieve"},
+        cpr::Url{kWebAddress+"/update"},
         cpr::Body{content.dump()},
         cpr::Header{{"Content-Type","application/json"}}        
     );
+
+    if (r.status_code != 200){
+        std::cout << r.text << std::endl;
+        std::cout << r.status_line << std::endl;
+        return 1;
+    }
     return 0;
 };
