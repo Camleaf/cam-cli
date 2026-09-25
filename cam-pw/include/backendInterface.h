@@ -8,6 +8,6 @@
 const std::string kWebAddress = "https://cam-cli.vercel.app";
 
 
-int load_firebase(json_data &enc_json);
-int write_firebase(json_data enc_json, bool prune=false);
+int load_backend(json_data &enc_json, std::string pw);
+int store_backend(json_data enc_json, std::string pw, bool prune=false);
 #endif

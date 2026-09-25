@@ -67,12 +67,15 @@ int write_master_key_disk(std::string key){
 
     generateHash(key+salt,hash);
 
-    std::ofstream hashFile(kHashLoc);
-    std::ofstream saltFile(kSaltLoc);
+    std::ofstream hashFile(kHashLoc, std::ios::out | std::ios::trunc); // clear files
+    std::ofstream saltFile(kSaltLoc, std::ios::out | std::ios::trunc);
 
     hashFile << hash;
     saltFile << salt;
 
+    hashFile.close();
+    saltFile.close();
+    
     load_disk(loaded_data);
     return 0;
 }
@@ -88,9 +91,33 @@ bool is_key_master(std::string key){
     std::getline(hashIn,hash);
     generateHash(key+salt,challenge);
 
+    saltIn.close();
+    hashIn.close();
+
     if (challenge == hash){
         return true;
     }
 
     return false;
 }
+
+
+
+int load_backend_key_disk(std::string &enc_backend_key){
+    
+    std::ifstream bkIn(kBackendKeyLoc);
+    std::getline(bkIn,enc_backend_key);
+    bkIn.close();
+    
+    return 0;
+
+};
+
+int write_backend_key_disk(std::string enc_backend_key){
+    
+    std::ofstream bkFile(kBackendKeyLoc, std::ios::out | std::ios::trunc); // clear file
+    bkFile << enc_backend_key; 
+    bkFile.close();
+    
+    return 0;   
+};

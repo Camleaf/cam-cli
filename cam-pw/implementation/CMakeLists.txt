@@ -1,4 +1,4 @@
-add_library(uclient-implementation state.cpp ioHelper.cpp extLoad.cpp encHelper.cpp stateManager.cpp firestore.cpp)
+add_library(uclient-implementation state.cpp ioHelper.cpp extLoad.cpp encHelper.cpp stateManager.cpp backendInterface.cpp)
 add_package_to_target("json" "uclient-implementation" FALSE)
 add_package_to_target("gpgmepp" "uclient-implementation" FALSE)
 add_package_to_target("rapidfuzz" "uclient-implementation" FALSE)
