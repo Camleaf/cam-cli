@@ -125,13 +125,12 @@ int query_password(std::string service, std::string username, std::string &enc_p
 
 int prompt_for_master(std::string &master_key){
     std::string challenge;
-    if (!get_valid_input("Enter master key: ", challenge, is_key_master)){
+    if (get_valid_input_hidden("Enter master key: ", challenge, is_key_master)){
         std::cout << "Incorrect master key";
         return 1;
     }
     
     master_key = challenge;
-    wipe_n_lines(1);
     return 0;
 }
 

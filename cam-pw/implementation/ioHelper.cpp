@@ -8,6 +8,8 @@
 #include <vector>
 #include <iostream>
 #include <state.h>
+#include <termios.h>
+#include <unistd.h>
 /* Wipes n previous lines in the console, inclusive of current line.
  */ 
 void wipe_n_lines(int n){
@@ -35,13 +37,55 @@ int get_valid_input(std::string message, std::string &choice, validityCallback c
         std::getline(std::cin, choice);
 
         if (callback(choice)){
-            return 1;
+            return 0;
         }
         wipe_n_lines(1);
 
     };
+    return 1;
+}
+
+int get_valid_input_hidden(std::string message, std::string &choice, validityCallback callback){
+
+    termios oldt;
+    tcgetattr(STDIN_FILENO, &oldt);
+    termios newt = oldt;
+    newt.c_lflag &= ~(ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    
+    for (int idx = 0; idx < 3; idx++){
+        
+        std::cout << message;
+        std::cout << " (" << idx + 1 << "/3): ";
+
+        char ch;
+        choice = "";
+        while ((ch = getchar()) != '\n') {
+            if (ch == 127) {
+                // Handle backspace
+                if (!choice.empty()) {
+                    choice.pop_back();
+                }
+            } else {
+                choice += ch;
+            }
+        }
+        std::cout << std::endl;
+
+        if (callback(choice)){
+            tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+            return 0;
+        } else {
+            wipe_n_lines(1);
+        }
+
+    };
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     return 0;
 }
+
+
+
 
 int get_input_option(std::string message, std::string &choice, std::vector<std::string> options){
     for (int idx = 0; idx < 3; idx++){
@@ -83,7 +127,7 @@ int outputQuery(std::vector<serviceUser> &ordered_query_result, std::string mast
         prev_service = x.service;
         idx++;
 
-        if (idx > result_count) break;
+        if (idx > result_count && result_count != -1) break;
     }
     return 0;
 }

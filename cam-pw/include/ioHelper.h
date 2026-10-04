@@ -12,7 +12,8 @@ typedef bool (*validityCallback)(std::string value);
 bool empty_validity_callback(std::string value);
 
 void wipe_n_lines(int n);
-int get_valid_input(std::string message, std::string &choice, validityCallback callback=check_if_right_pw_chars);
+int get_valid_input(std::string message, std::string &choice, validityCallback callback=check_if_right_pw_chars); // gets a input which is "valid" as decided by the callback provided
+int get_valid_input_hidden(std::string message, std::string &choice, validityCallback callback=check_if_right_pw_chars); // Same as get_valid_input
 int get_input_option(std::string message, std::string &choice, std::vector<std::string> options);
 std::string random_string(size_t len = 15);
 int outputQuery(std::vector<serviceUser> &ordered_query_result, std::string master_key="", int result_count = 10);

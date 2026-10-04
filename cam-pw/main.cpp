@@ -50,7 +50,7 @@ int main (int argc, char **argv) {
     load_disk(loaded_data);
     if (subAdd->parsed()){ // add key
         prompt_for_master(master_key);
-        get_valid_input("Enter password: ", pass);
+        if (get_valid_input("Enter password: ", pass)){return 1;};
         gpg_encrypt(master_key,pass,enc_pass);
         add_password(service,username,enc_pass);
         wipe_n_lines(1);
@@ -71,12 +71,14 @@ int main (int argc, char **argv) {
 
 
     } else if (subList->parsed()){
+        int outputCount = -1;
         if (!query.empty()){
             if (userModeFlag->count()){
                 query_by_username(x, query);
             } else {
                 query_by_service(x, query);
             }
+            outputCount = 15;
         } else {
             query_all(x);
         }        
@@ -84,7 +86,7 @@ int main (int argc, char **argv) {
             prompt_for_master(master_key);
         }
 
-        outputQuery(x,master_key);
+        outputQuery(x,master_key,outputCount);
 
 
     } else if (config->parsed()) {
@@ -122,7 +124,7 @@ int main (int argc, char **argv) {
     
     } else {
         query_all(x);
-        outputQuery(x);
+        outputQuery(x,"",-1);
     }
 
     return 0;
