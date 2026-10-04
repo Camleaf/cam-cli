@@ -4,7 +4,7 @@ set(project_name "sgit")
 
 # project definition
 project(${project_name} 
-    VERSION 0.0.5 
+    VERSION 0.0.6 
     LANGUAGES CXX
 )
 
