@@ -18,6 +18,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(BUILD_ENVIRONMENT "$ENV{BUILD_ENVIRON}") # set to Production when doing production builds
 add_definitions(-DBUILD_ENVIRONMENT="${BUILD_ENVIRONMENT}")
+message(INFO ": ${CMAKE_SOURCE_DIR}")
 message(INFO ": Building for ${BUILD_ENVIRONMENT}")
 
 # for intellisense
@@ -39,7 +40,7 @@ add_definitions(-Dlocal_directory="${local_directory}")
 add_definitions(-Dhome_folder="$ENV{HOME}/")
 # subdirs
 
-include("$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+include("${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 # Package structure created by @Ohm-V-IR that I liked so I borrowed and modified.
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/MultiSourcePackageFinder.cmake")
